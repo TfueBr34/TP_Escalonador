@@ -5,6 +5,8 @@ public class URL{
     private String host;
     private String caminho;
     private int profunfidade;
+    URL proximo = null;
+    URL anterior = null;
 
     public URL(String url){
         url_completa = url;
