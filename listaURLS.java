@@ -58,5 +58,44 @@ public class listaURLS {
         }
     }
 
+    // Conta a quantidade de URLS
+    public int qtdURLS() {
+        int qtd = 0;
+        URL aux = inicio;
 
+        while (aux != null) {
+            qtd++;
+            aux = aux.proximo;
+        }
+
+        return qtd;
+    }
+
+    // Remove uma URL especifica
+    public void removeURL(String url) {
+    URL aux = inicio;
+
+        while (aux != null) {
+            if (aux.getURL().equals(url)) {
+                // Caso seja o início
+                if (aux == inicio) {
+                    inicio = aux.proximo;
+                    if (inicio != null) {
+                        inicio.anterior = null;
+                    }
+                }
+                // Caso seja o fim
+                else if (aux == fim) {
+                    fim = aux.anterior;
+                    fim.proximo = null;
+                }
+                // Caso esteja no meio
+                else {
+                    aux.anterior.proximo = aux.proximo;
+                    aux.proximo.anterior = aux.anterior;
+                }
+            }
+            aux = aux.proximo;
+        }
+    }
 }

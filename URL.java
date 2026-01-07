@@ -4,7 +4,7 @@ public class URL{
     private String protocolo;
     private String host;
     private String caminho;
-    private int profunfidade;
+    private int profundidade;
     URL proximo = null;
     URL anterior = null;
 
@@ -13,7 +13,7 @@ public class URL{
         protocolo = extrairProtocolo(url);
         host = extrairHost(url);
         caminho = extrairCaminho(url);
-        profunfidade = extrairProfundidade(url);
+        profundidade = extrairProfundidade(url);
     }
 
     public String extrairProtocolo(String url){
@@ -97,7 +97,7 @@ public class URL{
         try {
             String path = extrairCaminho(url);
 
-            if(path == null || path == "/"){//verifica se o caminho é somente / e retorna profundidade 0
+            if (path == null || path.equals("/")) {//verifica se o caminho é somente / e retorna profundidade 0
                 return 0;
             }
             //remove a primeira barra e ultima barra(caso haja uma) do caminho, para no momento da contagem não haja um valor extra
@@ -129,7 +129,7 @@ public class URL{
     }
 
     public int getProfundidade() {
-        return profunfidade;
+        return profundidade;
     }
 
     public String getURL(){
