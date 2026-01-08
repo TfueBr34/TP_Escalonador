@@ -1,16 +1,19 @@
 public class listaURLS {
 
     private URL inicio;
+    // private String nomeHost;
     private URL fim;
 
     public listaURLS() {
         this.inicio = null;
         this.fim = null;
+        // this.nomeHost = null;
     }
 
     // Inserir no início na fila
     public void inserirInicio(String url) {
         URL novo = new URL(url);
+        // this.nomeHost = novo.getHost();
 
         if (inicio == null) {
             inicio = fim = novo;
@@ -24,6 +27,7 @@ public class listaURLS {
     // Inserir no fim
     public void inserirFim(String url) {
         URL novo = new URL(url);
+        // this.nomeHost = novo.getHost();
 
         if (fim == null) {
             inicio = fim = novo;
@@ -45,6 +49,10 @@ public class listaURLS {
             inicio.anterior = null;
         }
     }
+
+    // public void removerAtual() {
+    // if(inicio)
+    // }
 
     // Remover do fim
     public void removerFim() {
@@ -97,5 +105,13 @@ public class listaURLS {
             }
             aux = aux.proximo;
         }
+    }
+
+    public URL getInicio(){
+        return inicio;
+    }
+
+    public URL getFim(){
+        return fim;
     }
 }
