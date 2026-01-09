@@ -50,9 +50,6 @@ public class listaURLS {
         }
     }
 
-    // public void removerAtual() {
-    // if(inicio)
-    // }
 
     // Remover do fim
     public void removerFim() {
