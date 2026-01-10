@@ -11,7 +11,7 @@ public class Escalonador {
     boolean presente = false;
     String[] urls_unique = new String[quantidade];
     for (int i = 0; i < quantidade; i++) {
-      for (int j = 0; j <  urls_unique.length; j++) {
+      for (int j = 0; j < urls_unique.length; j++) {
         if (urls_unique[j] != null) {
           if (urls_unique[j].equals(urls[i])) {
             presente = true;
@@ -24,12 +24,12 @@ public class Escalonador {
         listaURLS.inserirFim(urls[i]);
         urls_unique[i] = urls[i];
       }
-      
+
     }
   } // adiciona ao escalonador as URLs informadas nas linhas seguintes. O parâmetro
     // <quantidade> indica quantas linhas serão lidas antes do próximo comando.
 
-  public int QTD_URLS_HOST(String host){
+  public int QTD_URLS_HOST(String host) {
     int qt_urls = 0;
     URL url = listaURLS.getInicio();
 
@@ -37,17 +37,17 @@ public class Escalonador {
       if (host.equals(url.getHost())) {
         qt_urls++;
       }
-      url =  url.proximo;
+      url = url.proximo;
     }
 
     return qt_urls;
   }
 
-  public String[] ESCALONA_TUDO() {
-    int qt_total_urls    = listaURLS.qtdURLS();
-    String[] urls        =  new String[qt_total_urls];
-    String[] urls_host   =  new String[qt_total_urls];
-    String[] hosts       =  LISTA_HOSTS();
+  public String[] ESCALONA_TUDO_PROF() {
+    int qt_total_urls = listaURLS.qtdURLS();
+    String[] urls = new String[qt_total_urls];
+    String[] urls_host = new String[qt_total_urls];
+    String[] hosts = LISTA_HOSTS();
     int qt_urls;
     int last_pos = 0;
 
@@ -61,15 +61,14 @@ public class Escalonador {
     }
 
     return urls;
-    //pegar lista de hosts, escalono o host de cada lista e junto em um só
   } // escalona todas as URLs seguindo as regras estabelecidas previamente. Quando
     // escalonadas, as URLs são exibidas e removidas da lista.
 
-  public String[] ESCALONA(int quantidade) {
-    int qt_total_urls    = listaURLS.qtdURLS();
-    String[] urls        =  new String[qt_total_urls];
-    String[] urls_host   =  new String[qt_total_urls];
-    String[] hosts       =  LISTA_HOSTS();
+  public String[] ESCALONA_PROF(int quantidade) {
+    int qt_total_urls = listaURLS.qtdURLS();
+    String[] urls = new String[qt_total_urls];
+    String[] urls_host = new String[qt_total_urls];
+    String[] hosts = LISTA_HOSTS();
     int qt_urls;
     int last_pos = 0;
 
@@ -80,7 +79,7 @@ public class Escalonador {
       qt_urls = QTD_URLS_HOST(host);
       if (qt_urls < quantidade) {
         quantidade -= qt_urls;
-      }else{
+      } else {
         qt_urls = quantidade;
         quantidade = 0;
       }
@@ -92,7 +91,173 @@ public class Escalonador {
     }
 
     return urls;
-    //MESMA COISA QUE A OUTRA, MAS A QUANTIDADE DE CADA URL CONTA PRA QUANTAS VEZES ESCALONAR
+  } // limita a quantidade de URLs escalonadas.
+
+  public String[] ESCALONA_TUDO_LARG() {
+    int qt_total_urls = listaURLS.qtdURLS();
+    String[] urls = new String[qt_total_urls];
+    String[] urls_host = new String[qt_total_urls];
+    String[] hosts = LISTA_HOSTS();
+    String[][] urls_hosts = new String[hosts.length][qt_total_urls];
+    int qt_urls;
+    int last_pos_h = 0;
+    int last_pos_u = 0;
+    int max_qt_urls = Integer.MIN_VALUE;
+
+    for (String host : hosts) {
+      qt_urls = QTD_URLS_HOST(host);
+      urls_host = ESCALONA_HOST(host, qt_urls);
+      for (int i = 0; i < urls_host.length; i++) {
+        urls_hosts[last_pos_h][i] = urls_host[i];
+      }
+      last_pos_h++;
+      if (qt_urls > max_qt_urls) {
+        max_qt_urls = qt_urls;
+      }
+    }
+
+    for (int i = 0; i < max_qt_urls; i++) {
+      for (int j = 0; j < hosts.length; j++) {
+        if (urls_hosts[j][i] != null) {
+          urls[last_pos_u] = urls_hosts[j][i];
+          last_pos_u++;
+        }
+      }
+    }
+    return urls;
+  } // escalona todas as URLs seguindo as regras estabelecidas previamente. Quando
+    // escalonadas, as URLs são exibidas e removidas da lista.
+
+  public String[] ESCALONA_LARG(int quantidade) {
+    int qt_total_urls = listaURLS.qtdURLS();
+    String[] urls = new String[qt_total_urls];
+    String[] urls_host = new String[qt_total_urls];
+    String[] hosts = LISTA_HOSTS();
+    String[][] urls_hosts = new String[hosts.length][qt_total_urls];
+    int qt_urls;
+    int last_pos_h = 0;
+    int last_pos_u = 0;
+    int max_qt_urls = Integer.MIN_VALUE;
+
+    for (String host : hosts) {
+      qt_urls = QTD_URLS_HOST(host);
+      urls_host = ESCALONA_HOST(host, qt_urls);
+      for (int i = 0; i < urls_host.length; i++) {
+        urls_hosts[last_pos_h][i] = urls_host[i];
+      }
+      last_pos_h++;
+      if (qt_urls > max_qt_urls) {
+        max_qt_urls = qt_urls;
+      }
+    }
+
+    for (int i = 0; i < max_qt_urls; i++) {
+      for (int j = 0; j < hosts.length; j++) {
+        if (quantidade == 0) {
+          break;
+        }
+        if (urls_hosts[j][i] != null) {
+          quantidade--;
+          urls[last_pos_u] = urls_hosts[j][i];
+          last_pos_u++;
+        }
+      }
+    }
+    return urls;
+
+  } // limita a quantidade de URLs escalonadas.
+
+  public String[] ESCALONA_TUDO_BEST() {
+    int qt_total_urls = listaURLS.qtdURLS();
+    String[] urls = new String[qt_total_urls];
+    String[] urls_host = new String[qt_total_urls];
+    String[] hosts = LISTA_HOSTS();
+    String[][] urls_hosts = new String[hosts.length][qt_total_urls];
+    int[] qt_urls_hosts = new int[hosts.length];
+    int[] pos_urls_hosts = new int[hosts.length];
+    int qt_urls;
+    int last_pos_h = 0;
+    int max_qt_urls = Integer.MIN_VALUE;
+    int maior_host_qt;
+    int maior_host_pos;
+
+    for (String host : hosts) {
+      qt_urls = QTD_URLS_HOST(host);
+      urls_host = ESCALONA_HOST(host, qt_urls);
+      for (int i = 0; i < urls_host.length; i++) {
+        urls_hosts[last_pos_h][i] = urls_host[i];
+      }
+      qt_urls_hosts[last_pos_h] = qt_urls;
+      last_pos_h++;
+      if (qt_urls > max_qt_urls) {
+        max_qt_urls = qt_urls;
+      }
+    }
+
+    for (int i = 0; i < qt_total_urls; i++) {
+      maior_host_qt = qt_urls_hosts[0];
+      maior_host_pos = 0;
+      for (int j = 0; j < qt_urls_hosts.length; j++) {
+        if (qt_urls_hosts[j] > maior_host_qt) {
+          maior_host_qt = qt_urls_hosts[j];
+          maior_host_pos = j;
+        }
+      }
+      urls[i] = urls_hosts[maior_host_pos][pos_urls_hosts[maior_host_pos]];
+      pos_urls_hosts[maior_host_pos]++;
+      qt_urls_hosts[maior_host_pos]--;
+    }
+
+    return urls;
+  } // escalona todas as URLs seguindo as regras estabelecidas previamente. Quando
+    // escalonadas, as URLs são exibidas e removidas da lista.
+
+  public String[] ESCALONA_BEST(int quantidade) {
+    int qt_total_urls = listaURLS.qtdURLS();
+    String[] urls = new String[qt_total_urls];
+    String[] urls_host = new String[qt_total_urls];
+    String[] hosts = LISTA_HOSTS();
+    String[][] urls_hosts = new String[hosts.length][qt_total_urls];
+    int[] qt_urls_hosts = new int[hosts.length];
+    int[] pos_urls_hosts = new int[hosts.length];
+    int qt_urls;
+    int last_pos_h = 0;
+    int max_qt_urls = Integer.MIN_VALUE;
+    int maior_host_qt;
+    int maior_host_pos;
+
+    for (String host : hosts) {
+      qt_urls = QTD_URLS_HOST(host);
+      urls_host = ESCALONA_HOST(host, qt_urls);
+      for (int i = 0; i < urls_host.length; i++) {
+        urls_hosts[last_pos_h][i] = urls_host[i];
+      }
+      qt_urls_hosts[last_pos_h] = qt_urls;
+      last_pos_h++;
+      if (qt_urls > max_qt_urls) {
+        max_qt_urls = qt_urls;
+      }
+    }
+
+    for (int i = 0; i < qt_total_urls; i++) {
+      if (quantidade == 0) {
+        break;
+      }
+      maior_host_qt = qt_urls_hosts[0];
+      maior_host_pos = 0;
+      for (int j = 0; j < qt_urls_hosts.length; j++) {
+        if (qt_urls_hosts[j] > maior_host_qt) {
+          maior_host_qt = qt_urls_hosts[j];
+          maior_host_pos = j;
+        }
+      }
+      urls[i] = urls_hosts[maior_host_pos][pos_urls_hosts[maior_host_pos]];
+      pos_urls_hosts[maior_host_pos]++;
+      qt_urls_hosts[maior_host_pos]--;
+      quantidade--;
+    }
+
+    return urls;
   } // limita a quantidade de URLs escalonadas.
 
   public String[] ESCALONA_HOST(String host, int quantidade) {
@@ -140,8 +305,8 @@ public class Escalonador {
       }
 
       for (int i = 0; i < profundidade.length; i++) {
-        for (int j = 0; j < profundidade.length-1; j++) {
-          if (urls[j] != null && urls[j+1] != null) {
+        for (int j = 0; j < profundidade.length - 1; j++) {
+          if (urls[j] != null && urls[j + 1] != null) {
             if (profundidade[j] > profundidade[j + 1]) {
               aux_url = urls[j];
               urls[j] = urls[j + 1];
