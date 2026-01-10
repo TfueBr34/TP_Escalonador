@@ -8,8 +8,23 @@ public class Escalonador {
   }
 
   public void ADD_URLS(int quantidade, String[] urls) {
+    boolean presente = false;
+    String[] urls_unique = new String[quantidade];
     for (int i = 0; i < quantidade; i++) {
-      listaURLS.inserirFim(urls[i]);
+      for (int j = 0; j <  urls_unique.length; j++) {
+        if (urls_unique[j] != null) {
+          if (urls_unique[j].equals(urls[i])) {
+            presente = true;
+            break;
+          }
+        }
+      }
+
+      if (!presente) {
+        listaURLS.inserirFim(urls[i]);
+        urls_unique[i] = urls[i];
+      }
+      
     }
   } // adiciona ao escalonador as URLs informadas nas linhas seguintes. O parâmetro
     // <quantidade> indica quantas linhas serão lidas antes do próximo comando.
@@ -19,12 +34,11 @@ public class Escalonador {
     URL url = listaURLS.getInicio();
 
     while (url != null) {
-      if (url.getHost() == host) {
+      if (host.equals(url.getHost())) {
         qt_urls++;
       }
       url =  url.proximo;
     }
-
 
     return qt_urls;
   }
@@ -35,12 +49,14 @@ public class Escalonador {
     String[] urls_host   =  new String[qt_total_urls];
     String[] hosts       =  LISTA_HOSTS();
     int qt_urls;
+    int last_pos = 0;
 
     for (String host : hosts) {
       qt_urls = QTD_URLS_HOST(host);
       urls_host = ESCALONA_HOST(host, qt_urls);
       for (int i = 0; i < qt_urls; i++) {
-        urls[i] = urls_host[i];
+        urls[last_pos] = urls_host[i];
+        last_pos++;
       }
     }
 
@@ -55,17 +71,23 @@ public class Escalonador {
     String[] urls_host   =  new String[qt_total_urls];
     String[] hosts       =  LISTA_HOSTS();
     int qt_urls;
+    int last_pos = 0;
 
     for (String host : hosts) {
+      if (quantidade == 0) {
+        break;
+      }
       qt_urls = QTD_URLS_HOST(host);
       if (qt_urls < quantidade) {
         quantidade -= qt_urls;
       }else{
         qt_urls = quantidade;
+        quantidade = 0;
       }
       urls_host = ESCALONA_HOST(host, qt_urls);
       for (int i = 0; i < qt_urls; i++) {
-        urls[i] = urls_host[i];
+        urls[last_pos] = urls_host[i];
+        last_pos++;
       }
     }
 
@@ -104,24 +126,30 @@ public class Escalonador {
     int aux_prof;
     URL url = listaURLS.getInicio();
     String host_url;
+    int pos_url = 0;
+    int pos_prof = 0;
 
     while (url != null) {
       host_url = url.getHost();
 
-      if (host_url == host) {
-        urls[urls.length] = url.getURL();
-        profundidade[profundidade.length] = url.getProfundidade();
+      if (host_url.equals(host)) {
+        urls[pos_url] = url.getURL();
+        pos_url++;
+        profundidade[pos_prof] = url.getProfundidade();
+        pos_prof++;
       }
 
       for (int i = 0; i < profundidade.length; i++) {
         for (int j = 0; j < profundidade.length-1; j++) {
-          if (profundidade[j] > profundidade[j + 1]) {
-            aux_url = urls[j];
-            urls[j] = urls[j + 1];
-            urls[j + 1] = aux_url;
-            aux_prof = profundidade[j];
-            profundidade[j] = profundidade[j + 1];
-            profundidade[j + 1] = aux_prof;
+          if (urls[j] != null && urls[j+1] != null) {
+            if (profundidade[j] > profundidade[j + 1]) {
+              aux_url = urls[j];
+              urls[j] = urls[j + 1];
+              urls[j + 1] = aux_url;
+              aux_prof = profundidade[j];
+              profundidade[j] = profundidade[j + 1];
+              profundidade[j + 1] = aux_prof;
+            }
           }
         }
       }
@@ -137,19 +165,23 @@ public class Escalonador {
     URL url = listaURLS.getInicio();
     boolean presente = false;
     String host;
+    int pos = 0;
 
     while (url != null) {
       host = url.getHost();
 
       for (int i = 0; i < hosts.length; i++) {
-        if (hosts[i].equals(host)) {
-          presente = true;
-          break;
+        if (hosts[i] != null) {
+          if (hosts[i].equals(host)) {
+            presente = true;
+            break;
+          }
         }
       }
 
       if (!presente) {
-        hosts[hosts.length] = host;
+        hosts[pos] = host;
+        pos++;
       }
 
       url = url.proximo;
@@ -162,18 +194,8 @@ public class Escalonador {
     URL url = listaURLS.getInicio();
 
     while (url != null) {
-      if (url.getHost() == host) {
+      if (host.equals(url.getHost())) {
         listaURLS.removeURL(url.getURL());
-        // if (url == listaURLS.getInicio()) {
-        //   listaURLS.removerInicio();
-        // } else {
-        //   if (url == listaURLS.getFim()) {
-        //     listaURLS.removerFim();
-        //   } else {
-        //     url.anterior.proximo = url.proximo;
-        //     url.proximo.anterior = url.anterior;
-        //   }
-        // }
       }
 
       url = url.proximo;

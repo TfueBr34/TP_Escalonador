@@ -82,8 +82,12 @@ public class listaURLS {
 
         while (aux != null) {
             if (aux.getURL().equals(url)) {
+                if (inicio == fim) {
+                    inicio = null;
+                    fim = null;
+                }
                 // Caso seja o início
-                if (aux == inicio) {
+                else if (aux == inicio) {
                     inicio = aux.proximo;
                     if (inicio != null) {
                         inicio.anterior = null;
