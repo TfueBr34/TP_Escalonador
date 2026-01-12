@@ -62,10 +62,22 @@ public class leitor {
                     }
 
                     case "LISTA_HOSTS": {
-                        String[] hosts = escalonador.LISTA_HOSTS();
+                        // String[] hosts = escalonador.LISTA_HOSTS();
+                        String[] hosts = escalonador.GET_HOSTS();
                         for (String h : hosts) {
                             if (h != null) {
                                 bw.write(h);
+                                bw.newLine();
+                            }
+                        }
+                        break;
+                    }
+
+                    case "VER_HOST": {
+                        String[] urls_hosts = escalonador.VER_HOST(partes[1]);
+                        for (String url_h : urls_hosts) {
+                            if (url_h != null) {
+                                bw.write(url_h);
                                 bw.newLine();
                             }
                         }
@@ -89,6 +101,19 @@ public class leitor {
                     case "ESCALONA_TUDO": {
                         // Mapeamento lógico
                         String[] urls = escalonador.ESCALONA_TUDO_PROF();
+                        for (String u : urls) {
+                            if (u != null) {
+                                bw.write(u);
+                                bw.newLine();
+                            }
+                        }
+                        break;
+                    }
+
+                    case "ESCALONA": {
+                        // Mapeamento lógico
+                        int qtd = Integer.parseInt(partes[1]);
+                        String[] urls = escalonador.ESCALONA_PROF(qtd);
                         for (String u : urls) {
                             if (u != null) {
                                 bw.write(u);

@@ -1,16 +1,32 @@
 public class Escalonador {
 
-  // private URL[] lista_urls;
   private listaURLS listaURLS;
+  private String[] hosts = new String[0];
 
   public Escalonador() {
     listaURLS = new listaURLS();
   }
 
+  public String[] GET_HOSTS(){
+
+    if (hosts.length == 0) {
+      hosts = LISTA_HOSTS();
+    } 
+
+    return hosts;
+
+  }
+
   public void ADD_URLS(int quantidade, String[] urls) {
-    boolean presente = false;
+    boolean presente;
     String[] urls_unique = new String[quantidade];
+    String extensao;
+    int pos_extensao;
+    String[] hosts_unique = new String[quantidade + hosts.length];
+    String[] aux_hosts = new String[quantidade + hosts.length];
+    String[] lista_hosts;
     for (int i = 0; i < quantidade; i++) {
+      presente = false;
       for (int j = 0; j < urls_unique.length; j++) {
         if (urls_unique[j] != null) {
           if (urls_unique[j].equals(urls[i])) {
@@ -21,11 +37,54 @@ public class Escalonador {
       }
 
       if (!presente) {
-        listaURLS.inserirFim(urls[i]);
-        urls_unique[i] = urls[i];
+        extensao = urls[i].substring(urls[i].length() - 5);
+        pos_extensao = extensao.indexOf(".");
+        if (pos_extensao == -1) {
+          listaURLS.inserirFim(urls[i]);
+          urls_unique[i] = urls[i];
+        } else {
+          if (extensao.toUpperCase().contains("HTML") || extensao.toUpperCase().contains("PHP")
+              || extensao.toUpperCase().contains("COM") || extensao.toUpperCase().contains("BR")) {
+            listaURLS.inserirFim(urls[i]);
+            urls_unique[i] = urls[i];
+          }
+        }
       }
-
     }
+
+    if (hosts.length == 0) {
+      hosts = LISTA_HOSTS();
+    } else {
+      for (int i = 0; i < aux_hosts.length; i++) {
+        if (i > hosts.length - 1) {
+          lista_hosts = LISTA_HOSTS();
+          for (int g = 0; g < lista_hosts.length; g++) {
+            presente = false;
+            for (int j = 0; j < hosts_unique.length; j++) {
+              if (hosts_unique[j] != null) {
+                if (hosts_unique[j].equals(lista_hosts[g])) {
+                  presente = true;
+                  break;
+                }
+              }
+            }
+            
+            if (!presente) {
+              if(lista_hosts[g] != null){
+                aux_hosts[i] = lista_hosts[g];
+                hosts_unique[i] = lista_hosts[g];
+                break;
+              }
+            }
+          }
+        } else {
+          aux_hosts[i] = hosts[i];
+          hosts_unique[i] = hosts[i];
+        }
+      }
+      hosts = aux_hosts;
+    }
+
   } // adiciona ao escalonador as URLs informadas nas linhas seguintes. O parâmetro
     // <quantidade> indica quantas linhas serão lidas antes do próximo comando.
 
@@ -47,7 +106,7 @@ public class Escalonador {
     int qt_total_urls = listaURLS.qtdURLS();
     String[] urls = new String[qt_total_urls];
     String[] urls_host = new String[qt_total_urls];
-    String[] hosts = LISTA_HOSTS();
+    // String[] hosts = LISTA_HOSTS();
     int qt_urls;
     int last_pos = 0;
 
@@ -68,7 +127,7 @@ public class Escalonador {
     int qt_total_urls = listaURLS.qtdURLS();
     String[] urls = new String[qt_total_urls];
     String[] urls_host = new String[qt_total_urls];
-    String[] hosts = LISTA_HOSTS();
+    // String[] hosts = LISTA_HOSTS();
     int qt_urls;
     int last_pos = 0;
 
@@ -97,7 +156,7 @@ public class Escalonador {
     int qt_total_urls = listaURLS.qtdURLS();
     String[] urls = new String[qt_total_urls];
     String[] urls_host = new String[qt_total_urls];
-    String[] hosts = LISTA_HOSTS();
+    // String[] hosts = LISTA_HOSTS();
     String[][] urls_hosts = new String[hosts.length][qt_total_urls];
     int qt_urls;
     int last_pos_h = 0;
@@ -132,7 +191,7 @@ public class Escalonador {
     int qt_total_urls = listaURLS.qtdURLS();
     String[] urls = new String[qt_total_urls];
     String[] urls_host = new String[qt_total_urls];
-    String[] hosts = LISTA_HOSTS();
+    // String[] hosts = LISTA_HOSTS();
     String[][] urls_hosts = new String[hosts.length][qt_total_urls];
     int qt_urls;
     int last_pos_h = 0;
@@ -171,7 +230,7 @@ public class Escalonador {
     int qt_total_urls = listaURLS.qtdURLS();
     String[] urls = new String[qt_total_urls];
     String[] urls_host = new String[qt_total_urls];
-    String[] hosts = LISTA_HOSTS();
+    // String[] hosts = LISTA_HOSTS();
     String[][] urls_hosts = new String[hosts.length][qt_total_urls];
     int[] qt_urls_hosts = new int[hosts.length];
     int[] pos_urls_hosts = new int[hosts.length];
@@ -216,7 +275,7 @@ public class Escalonador {
     int qt_total_urls = listaURLS.qtdURLS();
     String[] urls = new String[qt_total_urls];
     String[] urls_host = new String[qt_total_urls];
-    String[] hosts = LISTA_HOSTS();
+    // String[] hosts = LISTA_HOSTS();
     String[][] urls_hosts = new String[hosts.length][qt_total_urls];
     int[] qt_urls_hosts = new int[hosts.length];
     int[] pos_urls_hosts = new int[hosts.length];
@@ -328,11 +387,12 @@ public class Escalonador {
   public String[] LISTA_HOSTS() {
     String[] hosts = new String[listaURLS.qtdURLS()];
     URL url = listaURLS.getInicio();
-    boolean presente = false;
+    boolean presente;
     String host;
     int pos = 0;
 
     while (url != null) {
+      presente = false;
       host = url.getHost();
 
       for (int i = 0; i < hosts.length; i++) {
@@ -366,6 +426,13 @@ public class Escalonador {
       url = url.proximo;
     }
 
+    for (int i = 0; i < hosts.length; i++) {
+      if (hosts[i].equals(host)) {
+        hosts[i] = null;
+        break;
+      }
+    }
+
   } // limpa a lista de URLs do host.
 
   public void LIMPA_TUDO() {
@@ -374,5 +441,7 @@ public class Escalonador {
     for (int i = qt_urls; i > 0; i--) {
       listaURLS.removerInicio();
     }
+
+    hosts = new String[0];
   } // limpa todas as URLs, inclusive os hosts.
 }
