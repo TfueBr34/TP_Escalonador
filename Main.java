@@ -3,7 +3,7 @@ public class Main {
 
         String caminho_entrada = args[0];
         int pos = caminho_entrada.lastIndexOf(".");
-        String caminho_saida = caminho_entrada.substring(0, pos) +".out"+ caminho_entrada.substring(pos);
+        String caminho_saida = caminho_entrada.substring(0, pos) +"-out"+ caminho_entrada.substring(pos);
 
         if(args.length > 2){
             System.err.println(args[2]);
