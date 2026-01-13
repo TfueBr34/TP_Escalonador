@@ -6,6 +6,20 @@ import java.io.IOException;
 
 public class leitor {
 
+    int tipo_exec;
+
+    public leitor(String tp_exec){
+
+        if (tp_exec.toLowerCase().equals("breadth")) {
+            tipo_exec = 2;
+        }else if(tp_exec.toLowerCase().equals("best")){
+            tipo_exec = 3;
+        }else{
+            tipo_exec = 1;
+        }
+
+    }
+
     // Lê o arquivo de entrada
     public String[] getLinhas(String path) {
         int total = 0;
@@ -100,7 +114,21 @@ public class leitor {
 
                     case "ESCALONA_TUDO": {
                         // Mapeamento lógico
-                        String[] urls = escalonador.ESCALONA_TUDO_PROF();
+                        String[] urls = new String[0];
+                        switch (tipo_exec) {
+                            case 1:
+                                urls = escalonador.ESCALONA_TUDO_PROF();
+                                break;
+                            case 2:
+                                urls = escalonador.ESCALONA_TUDO_LARG();
+                                break;
+                            case 3:
+                                urls = escalonador.ESCALONA_TUDO_BEST();
+                                break;
+                            default:
+                                break;
+                        }
+                        
                         for (String u : urls) {
                             if (u != null) {
                                 bw.write(u);
@@ -111,9 +139,22 @@ public class leitor {
                     }
 
                     case "ESCALONA": {
-                        // Mapeamento lógico
+                        String[] urls = new String[0];
                         int qtd = Integer.parseInt(partes[1]);
-                        String[] urls = escalonador.ESCALONA_PROF(qtd);
+                        switch (tipo_exec) {
+                            case 1:
+                                urls = escalonador.ESCALONA_PROF(qtd);
+                                break;
+                            case 2:
+                                urls = escalonador.ESCALONA_LARG(qtd);
+                                break;
+                            case 3:
+                                urls = escalonador.ESCALONA_BEST(qtd);
+                                break;
+                            default:
+                                break;
+                        }
+                        
                         for (String u : urls) {
                             if (u != null) {
                                 bw.write(u);
